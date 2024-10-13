@@ -1,0 +1,71 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_DB=airflow
+      - POSTGRES_PASSWORD=airflow
+    volumes:
+      - ./postgres/:/var/lib/postgresql/data
+
+  # init-db:
+  #   build: .
+  #   depends_on:
+  #     - postgres
+  #   entrypoint: /bin/bash
+  #   env_file:
+  #     - .env
+  #   command: 
+  #     - -c
+  #     - airflow db migrate
+  webserver:
+    build: .
+    restart: always
+    depends_on:
+      - scheduler
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW_CONN_MSSQL_DEFAULT=mssql://${AIRFLOW_MSSQL_USER}:${AIRFLOW_MSSQL_PASSWORD}@${HOST_IP_ADDRESS}:1433/AdventureWorks2022 #?driver=ODBC+Driver+17+for+SQL+Server"
+    ports:
+      - "8080:8080"
+    entrypoint: ./entrypoint_webserver.sh
+    #   - airflow webserver
+    #   - airflow connections add 'mssql_default' --conn-uri ${AIRFLOW_CONN_MSSQL_DEFAULT}
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 2
+
+  scheduler:
+    build: .
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+    env_file:
+      - .env
+    entrypoint: ./entrypoint_scheduler.sh
+    #environment:
+      #- AIRFLOW_CONN_MSSQL_DEFAULT=mssql://${AIRFLOW_MSSQL_USER}:${AIRFLOW_MSSQL_PASSWORD}@${HOST_IP_ADDRESS}:1433/AdventureWorks2022 #?driver=ODBC+Driver+17+for+SQL+Server"
+    command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 2
+
+#networks:
+#  etl_network:
+#    driver: bridge
+
+
+   
