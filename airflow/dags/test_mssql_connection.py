@@ -22,6 +22,7 @@ with DAG(
         task_id="get_all_countries",
         conn_id="mssql_default",  # This should match the connection ID in Airflow
         sql="SELECT * FROM Person.CountryRegion;",
+        hook_params={"enable_log_db_messages": True},
     )
     
     get_all_countries
