@@ -1,0 +1,9 @@
+{
+    "conn_type": "postgresql",
+    "host": "localhost",
+    "login": "root",
+    "password": "plainpassword",
+    "schema": "airflow",
+    "port": 5432,
+    "extra": "{\"sslmode\": \"verify-full\",\"sslcert\": \"\/opt\/airflow\/ssl_certs\/postgresql.pem\",\"sslrootcert\": \"\/opt\/airflow\/ssl_certs\/root.pem\" \"sslkey\": \"\/opt\/airflow\/ssl_certs\/postgresql-rsa-key.pem\"}"
+}

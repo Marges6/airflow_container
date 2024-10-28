@@ -1,9 +1,10 @@
-version: '3'
 
 x-spark-common: &spark-common
   image: bitnami/spark:latest
   volumes:
     - ./jobs:/opt/bitnami/spark/jobs  
+#  networks: 
+#    - airflow_network
 
 x-airflow-common: &airflow-common
   build:
@@ -12,10 +13,13 @@ x-airflow-common: &airflow-common
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./sql_scripts:/opt/airflow/sql_scripts
+    - ./ssl_certs:/opt/airflow/ssl_certs
+    - ./airflow/stg_postgres_conn.json:/opt/airflow/stg_postgres_conn.json
   env_file:
     .env
   entrypoint: /bin/bash
-
+ # networks:
+ #   - airflow_network
 
 
 services:
@@ -30,18 +34,25 @@ services:
     volumes:
       - ./postgres/:/var/lib/postgresql/data
     command: -p 5433
+ #   networks: 
+ #     - airflow_network
+    #alias: postgres
+
 
 #  init-db:
 #      <<: *airflow-common 
 #      depends_on:
 #          - postgres
 #      environment: 
-#        AIRFLOW_CONN_MSSQL_DEFAULT: mssql://${AIRFLOW_MSSQL_USER}:${AIRFLOW_MSSQL_PASSWORD}@${MSSQL_HOST_IP_ADDRESS}:1433/AdventureWorks2022
+#        AIRFLOW_CONN_SOURCE_MSSQL: mssql://${AIRFLOW_MSSQL_USER}:${AIRFLOW_MSSQL_PASSWORD}@${MSSQL_HOST_IP_ADDRESS}:1433/AdventureWorks2022
+##        AIRFLOW_CONN_STG_POSTGRES: cat /opt/airflow/stg_postgres_conn.json
 #      command: -c "airflow db reset -y; \
 #                airflow db migrate ; \
 #                airflow users create --username airflow --password password --firstname M --lastname G --role Admin --email admin@admin.com; \
-#                airflow connections add mssql_default --conn-uri $$AIRFLOW_CONN_MSSQL_DEFAULT" 
-#
+#                airflow connections add source_mssql --conn-uri $$AIRFLOW_CONN_SOURCE_MSSQL; \
+#                AIRFLOW_CONN_STG_POSTGRES="`cat /opt/airflow/stg_postgres_conn.json`"; \
+#                airflow connections add stg_postgres --conn-json \"$$AIRFLOW_CONN_STG_POSTGRES\"" 
+
   webserver:
     <<: *airflow-common
     depends_on:
@@ -67,9 +78,17 @@ services:
       timeout: 30s
       retries: 2
     restart: always
+
+#
 #networks:
-#  etl_network:
-#    driver: bridge
+#  airflow_network:
+#    driver: bridge 
+#    ipam:
+#      config: 
+#        - subnet: 172.20.0.0/16
+#          gateway: 172.20.0.1
+
+      
 
 
    

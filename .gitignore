@@ -2,3 +2,5 @@
 .env.init
 .env
 /postgres
+/ssl_certs
+/airflow/stg_postgres_conn.json

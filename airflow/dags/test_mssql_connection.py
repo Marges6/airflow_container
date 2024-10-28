@@ -20,7 +20,7 @@ with DAG(
     # Task: Get all countries from the AdventureWorks database
     get_all_countries = SQLExecuteQueryOperator(
         task_id="get_all_countries",
-        conn_id="mssql_default",  # This should match the connection ID in Airflow
+        conn_id="source_mssql",  # This should match the connection ID in Airflow
         sql="SELECT * FROM Person.CountryRegion;",
         hook_params={"enable_log_db_messages": True},
     )
