@@ -13,10 +13,11 @@ SELECT
 	a.PostalCode,
 	sp.StateProvinceCode,
 	sp.Name AS StateProvinceName,
-	sp.CountryRegionCode,
+	sp.CountryRegionCode AS CountryCode,
 	st.Name AS TerritoryName,
-	st.[Group] AS TerritoryGroupName
---	rowguid
+	st.[Group] AS TerritoryGroupName,
+	GETUTCDATE() AS LoadDateTimeUTC
+	--	rowguid
 --	ModifiedDate
 FROM
 	AdventureWorks2022.Sales.Customer c
@@ -34,4 +35,5 @@ INNER JOIN
 	AdventureWorks2022.Person.StateProvince sp ON a.StateProvinceID = sp.StateProvinceID
 INNER JOIN
 	AdventureWorks2022.Sales.SalesTerritory st ON st.TerritoryID = sp.TerritoryID 
+
  
