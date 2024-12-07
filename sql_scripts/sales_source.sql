@@ -20,7 +20,7 @@ SELECT
 	ROUND(soh.SubTotal, 2) AS SubTotal,
 	ROUND(soh.TaxAmt, 2) AS TaxAmt,
 	ROUND(soh.Freight, 2) AS Freight,
-	ROUND(soh.TotalDue, 2) AS TotalDue	
+	ROUND(soh.TotalDue, 2) AS TotalDue,
 	GETUTCDATE() AS LoadDateTimeUTC
 FROM
 	AdventureWorks2022.Sales.SalesOrderHeader soh
@@ -38,6 +38,6 @@ INNER JOIN
 	AdventureWorks2022.Sales.SalesTerritory st ON soh.TerritoryID = st.TerritoryID
 LEFT JOIN
 	AdventureWorks2022.Person.Person p2 ON soh.SalesPersonID = p2.BusinessEntityID
-WHERE soh.OrderDate BETWEEN {{params.begin_date}} AND {{params.end_date}} 
+WHERE soh.OrderDate BETWEEN %(begin_date)s AND %(end_date)s
 ORDER BY OrderDate
 	

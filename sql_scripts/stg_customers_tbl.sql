@@ -1,7 +1,8 @@
-CREATE TABLE IF NOT EXISTS stg_customers (
+-- creating staging customers table
+CREATE TABLE IF NOT EXISTS arf.stg_customers (
 	CustomerAccountNumber VARCHAR(10),
 	CustomerName VARCHAR(255),
-	StoreFlag BIT(2),
+	StoreFlag BOOLEAN,
 	AddressType VARCHAR(50),
 	AddressLines VARCHAR(255),
 	City VARCHAR(100),
@@ -12,4 +13,4 @@ CREATE TABLE IF NOT EXISTS stg_customers (
 	TerritoryName VARCHAR(30),
 	TerritoryGroupName VARCHAR(30),
 	LoadDateTime TIMESTAMP 
-)
+);

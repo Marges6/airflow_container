@@ -1,3 +1,5 @@
+DECLARE @begin_date DATE;
+
 SELECT
 	p.ProductNumber,
 	p.Name,
@@ -9,14 +11,14 @@ SELECT
 	p.ReorderPoint,
 	p.StandardCost,
 	p.ListPrice,
-	p.[Size],
+	p.Size,
 	p.SizeUnitMeasureCode,
 	p.WeightUnitMeasureCode,
 	p.Weight,
 	p.DaysToManufacture,
 	p.ProductLine,
 	p.Class,
-	p.[Style],
+	p.Style,
 	ps.Name AS ProductSubcategoryName,
 	pc.Name AS ProductCategoryName,
 	pm.Name AS ProductModelName,
@@ -35,7 +37,7 @@ INNER JOIN
 	AdventureWorks2022.Production.ProductModelProductDescriptionCulture pmpdc ON pm.ProductModelID = pmpdc.ProductModelID AND pmpdc.CultureID = 'en'
 INNER JOIN
 	AdventureWorks2022.Production.ProductDescription pd  ON pmpdc.ProductDescriptionID  = pd.ProductDescriptionID 
-WHERE p.SellStartDate <= {{params.begin_date}}
+WHERE p.SellStartDate <= @begin_date
 
 
 
